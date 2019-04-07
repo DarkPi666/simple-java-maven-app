@@ -33,7 +33,7 @@ pipeline {
           }
 
           steps {
-              withSonarQubeEnv('sonarqube') {
+              withSonarQubeEnv('SonarQube') {
                   sh "${scannerHome}/bin/sonar-scanner"
               }
 
@@ -41,6 +41,6 @@ pipeline {
                   waitForQualityGate abortPipeline: true
               }
           }
-      }
+       }
     }
 }
