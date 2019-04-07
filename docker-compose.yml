@@ -1,0 +1,51 @@
+version: "3"
+services:
+
+  jenkins:
+    image: jenkinsci/blueocean
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "jenkins:/var/jenkins_home"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    ports:
+      - "8080:8080"
+    networks:
+      - webnet
+
+  visualizer:
+    image: dockersamples/visualizer:stable
+    ports:
+      - "8081:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    networks:
+      - webnet
+
+  sonar:
+    image: sonarqube
+    ports:
+      - "9000:9000"
+    volumes:
+      - "qube:/opt/sonarqube"
+    deploy:
+      # placement:
+      #   constraints: [node.role == manager]
+    networks:
+      - webnet
+
+volumes:
+  jenkins:
+    external: true
+  qube:
+    external: true
+
+networks:
+
+  webnet:
+
+    # 2551edfac3bf4201a4452509cd5222cd
