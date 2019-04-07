@@ -26,6 +26,15 @@ pipeline {
                 sh './jenkins/scripts/deliver.sh'
             }
         }
+
+        stage("build & SonarQube analysis") {
+          agent none
+          steps {
+            withSonarQubeEnv('SonarQube') {
+              sh 'mvn clean package sonar:sonar'
+            }
+          }
+        }
         stage("Quality Gate") {
           steps {
             timeout(time: 1, unit: 'HOURS') {
@@ -35,23 +44,3 @@ pipeline {
         }
     }
 }
-pipeline {
-        agent none
-        stages {
-          stage("build & SonarQube analysis") {
-            agent any
-            steps {
-              withSonarQubeEnv('SonarQube') {
-                sh 'mvn clean package sonar:sonar'
-              }
-            }
-          }
-          stage("Quality Gate") {
-            steps {
-              timeout(time: 1, unit: 'HOURS') {
-                waitForQualityGate abortPipeline: true
-              }
-            }
-          }
-        }
-      }
